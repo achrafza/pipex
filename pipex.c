@@ -6,7 +6,7 @@
 /*   By: azahid <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 05:13:14 by azahid            #+#    #+#             */
-/*   Updated: 2025/02/07 07:05:26 by azahid           ###   ########.fr       */
+/*   Updated: 2025/02/10 05:18:27 by azahid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,12 @@ void	freeit(char **str)
 	if (!str)
 		return ;
 	while (str[i])
-		free(str[i++]);
+	{
+		free(str[i]);
+		i++;
+	}
 	free(str);
+	str = NULL;
 }
 
 pid_t	file_in(int *fd, char **createarg, char **av, char **envp)
@@ -48,13 +52,13 @@ pid_t	file_in(int *fd, char **createarg, char **av, char **envp)
 		return (close(fd[0]), close(fd[1]), perror("fail to fd"), -1);
 	pidin = fork();
 	if (pidin < 0)
-		return (close(fdinfile), close(fd[0]), close(fd[1]), freeit(createarg),
+		return (close(fdinfile), close(fd[0]), close(fd[1]),
 			perror("failed to fork"), -1);
 	if (pidin == 0)
 	{
 		if (dup2(fdinfile, 0) == -1 || dup2(fd[1], 1) == -1)
 			return (close(fdinfile), close(fd[0]), close(fd[1]),
-				freeit(createarg), perror("fail to dup2"), -1);
+				perror("fail to dup2"), -1);
 		close(fd[0]);
 		close(fd[1]);
 		close(fdinfile);
@@ -77,18 +81,15 @@ pid_t	file_out(int *fd, char **createarg, char **av, char **envp)
 		return (close(fd[0]), perror("cnf"), -1);
 	pidout = fork();
 	if (pidout < 0)
-		return (close(fd[0]), close(fdoutfile), freeit(createarg),
-			perror("ftf"), -1);
+		return (close(fd[0]), close(fdoutfile), perror("ftf"), -1);
 	if (pidout == 0)
 	{
 		if (dup2(fd[0], 0) == -1 || dup2(fdoutfile, 1) == -1)
-			return (close(fd[0]), close(fdoutfile), freeit(createarg),
-				perror("ftd"), -1);
+			return (close(fd[0]), close(fdoutfile), perror("ftd"), -1);
 		close(fd[0]);
 		close(fdoutfile);
 		if (createarg)
 			execve(createarg[0], createarg, envp);
-		freeit(createarg);
 		perror("exec failed to write in pipe");
 		exit(1);
 	}

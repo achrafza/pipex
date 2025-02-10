@@ -6,12 +6,13 @@
 /*   By: azahid <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 06:20:59 by azahid            #+#    #+#             */
-/*   Updated: 2025/02/07 07:04:09 by azahid           ###   ########.fr       */
+/*   Updated: 2025/02/10 05:17:57 by azahid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft/libft.h"
 #include "pipex.h"
+#include <stdio.h>
 
 char	**parse_envp(char *envp[])
 {
@@ -55,8 +56,6 @@ char	*find_access(char *path[], char *commande)
 
 	joinedpath = NULL;
 	i = 0;
-	if (!access(commande, F_OK | X_OK))
-		return (commande);
 	sp = parse_envp(path);
 	if (!sp)
 		return (NULL);
@@ -69,7 +68,7 @@ char	*find_access(char *path[], char *commande)
 			return (freeit(sp), joinedpath);
 		free(joinedpath);
 	}
-	return (free(joinedpath), freeit(sp), NULL);
+	return (freeit(sp), NULL);
 }
 
 char	**createargs1(char *str, char *envp[])
