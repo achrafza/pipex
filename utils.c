@@ -6,13 +6,14 @@
 /*   By: azahid <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 06:20:59 by azahid            #+#    #+#             */
-/*   Updated: 2025/02/10 05:17:57 by azahid           ###   ########.fr       */
+/*   Updated: 2025/02/10 13:19:07 by azahid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft/libft.h"
 #include "pipex.h"
 #include <stdio.h>
+#include <unistd.h>
 
 char	**parse_envp(char *envp[])
 {
@@ -56,6 +57,8 @@ char	*find_access(char *path[], char *commande)
 
 	joinedpath = NULL;
 	i = 0;
+	if (!access(commande, X_OK))
+		return (ft_strdup(commande));
 	sp = parse_envp(path);
 	if (!sp)
 		return (NULL);
